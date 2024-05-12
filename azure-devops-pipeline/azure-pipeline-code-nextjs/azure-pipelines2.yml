@@ -1,0 +1,30 @@
+trigger:
+  branches:
+    include:
+      - master
+
+pool:
+  name: Default
+  vmImage: 'macOS-latest' # Set virtual machine image to macOS
+
+steps:
+  - task: UseNode@1
+    inputs:
+      version: '18.x'
+    displayName: '🟢 Install Node.js'
+
+  - script: |
+      yarn install
+    displayName: '📦 Package Install'
+
+  - script: |
+      yarn build
+    displayName: '🏗️ Build Project'
+
+  - script: |
+      npm install -g netlify-cli
+      netlify deploy --build --prod
+    displayName: '🚀 Deploy to Netlify'
+    env:
+      NETLIFY_AUTH_TOKEN: $(NETLIFY_AUTH_TOKEN)
+      NETLIFY_SITE_ID: $(NETLIFY_SITE_ID)
